@@ -1,0 +1,7 @@
+tensorflow>=2.9.0
+numpy
+opencv-python
+pillow
+matplotlib
+rasterio
+tqdm

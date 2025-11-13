@@ -1,0 +1,2 @@
+data set : https://www.kaggle.com/datasets/franciscoescobar/satellite-images-of-water-bodies?
+model : https://drive.google.com/drive/folders/1eyNQnfaZQpLe0D1s8gCR3O4AEk4yunpa?usp=sharing
