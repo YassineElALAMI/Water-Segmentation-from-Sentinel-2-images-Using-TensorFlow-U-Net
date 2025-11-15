@@ -1,9 +1,10 @@
 # 🌊 GeoAI Water Body Detection
 
-A clean, production-ready semantic segmentation toolkit for detecting water bodies in Sentinel‑2 satellite imagery using a U‑Net model. Includes a simple desktop GUI to test images, plus modular Python utilities for preprocessing, inference, and visualization.
+A clean, production-ready semantic segmentation toolkit for detecting water bodies in Sentinel‑2 satellite imagery using a U‑Net model. Includes both a Streamlit web app and a Tkinter desktop GUI, plus modular Python utilities for preprocessing, inference, and visualization.
 
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.9+-orange.svg)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.x-red.svg)
 ![Tkinter](https://img.shields.io/badge/Tkinter-GUI-ff69b4.svg)
 ![Pillow](https://img.shields.io/badge/Pillow-10.0%2B-informational.svg)
 
@@ -12,8 +13,9 @@ A clean, production-ready semantic segmentation toolkit for detecting water bodi
 This project provides a complete evaluation setup for a U‑Net model trained to detect water surfaces in satellite imagery:
 
 - Modular Python codebase: preprocessing (`src/utils.py`), inference (`src/inference.py`), visualization (`src/visualization.py`)
-- Desktop GUI (Tkinter) for quick, interactive testing
-- Polished visual outputs: binary masks and color overlays
+- Streamlit web app for fast, friendly, multi-tab exploration (mask, overlay, heatmap, map viewer)
+- Desktop GUI (Tkinter) for quick offline testing
+- Polished visual outputs: binary masks, overlays, probability heatmaps
 - Clear project structure and straightforward setup
 
 ## 📁 Project Structure
@@ -33,6 +35,11 @@ Water-Segmentation-from-Sentinel-2-Using-TensorFlow-U-Net/
 │   ├── inference.py            # Model loading + prediction + stats
 │   └── visualization.py        # Mask/overlay visualization + saving
 │
+├── streamlit_app/
+│   ├── app.py                  # Streamlit app entry
+│   ├── map_viewer.py           # Folium map viewer helper
+│   └── requirements_streamlit.txt
+│
 ├── gui/
 │   └── app_tkinter.py          # Desktop GUI entry point
 │
@@ -49,6 +56,7 @@ Water-Segmentation-from-Sentinel-2-Using-TensorFlow-U-Net/
 
 ```powershell
 pip install -r requirements.txt
+pip install -r streamlit_app/requirements_streamlit.txt
 ```
 
 ### 2) Place the model file
@@ -62,7 +70,15 @@ models/
 
 > Note: `*.keras` files are ignored by git (see `.gitignore`).
 
-### 3) Run the GUI
+### 3a) Run the Streamlit web app (recommended)
+
+```powershell
+streamlit run streamlit_app/app.py
+```
+
+You’ll get tabs for Mask, Overlay, Heatmap, Heatmap Blend, and a basic Map Viewer. Use the sidebar to change detection threshold and overlay transparency, and download outputs from each tab.
+
+### 3b) Run the desktop GUI
 
 ```powershell
 python gui/app_tkinter.py
@@ -72,7 +88,17 @@ The interface lets you upload an image, adjust detection threshold and overlay t
 
 ## 💻 Usage
 
-### GUI (Recommended)
+### Streamlit Web App
+
+1. Run `streamlit run streamlit_app/app.py`
+2. Upload an RGB image (JPG/PNG)
+3. Adjust threshold (0.0–1.0) and overlay transparency
+4. Explore tabs: Mask, Overlay, Heatmap, Heatmap Blend, Map Viewer
+5. Download the generated artifacts from each tab
+
+The Map Viewer currently overlays the image on a global map with placeholder bounds; georeferenced overlays can be added later.
+
+### Desktop GUI
 
 1. Run `python gui/app_tkinter.py`
 2. Click “Upload Image” (supports JPG/PNG)
@@ -117,7 +143,7 @@ mask_rgb = create_mask_visualization(mask)
 
 - `src/inference.py`
 	- `load_model(model_path)` – Load the Keras model
-	- `predict_mask(image_array, threshold, model)` – Predict binary mask
+	- `predict_mask(image_array, threshold=0.5, model=model)` – Predict binary mask
 	- `calculate_water_coverage(mask)` – Compute water/land percentages
 
 - `src/visualization.py`
@@ -129,8 +155,9 @@ mask_rgb = create_mask_visualization(mask)
 
 - ✅ U‑Net inference on 256×256 RGB images
 - ✅ Adjustable detection threshold and overlay alpha
-- ✅ Ready‑to‑use GUI for quick testing
+- ✅ Streamlit web app and Tkinter GUI
 - ✅ Clean visual outputs (mask + overlay)
+- ✅ Probability heatmaps and heatmap blending
 - ✅ Lightweight, modular codebase
 
 ## 📊 Model Info
@@ -145,6 +172,8 @@ mask_rgb = create_mask_visualization(mask)
 - Missing model file: ensure `models/unet_water_best.keras` exists
 - Import errors: run `pip install -r requirements.txt`
 - TensorFlow CPU notices: informational logs about available CPU instructions are expected
+- Streamlit import errors: also install `streamlit_app/requirements_streamlit.txt`
+- If you get a tuple unpack/predict error in Streamlit, ensure `predict_mask` is called with `model=` keyword when you need the third argument to be the model instance.
 
 ## 🗂️ Git Tips (large files)
 

@@ -3,6 +3,9 @@ from pathlib import Path
 from PIL import Image
 import numpy as np
 import io
+from map_viewer import display_geospatial_image
+from streamlit_folium import st_folium
+
 
 # Import from project
 import sys
@@ -26,8 +29,8 @@ st.set_page_config(
     page_icon="🌊",
 )
 
-st.markdown("<h1 style='text-align:center;'>🌊 GeoAI Water Body Detection</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center;'>U-Net Water Segmentation for Sentinel-2 (RGB)</p>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align:center;'>GeoAI Water Body Detection</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center;'>U-Net Water Segmentation for Sentinel-2</p>", unsafe_allow_html=True)
 
 # -------------------------------------------------------------
 # Load model
@@ -78,9 +81,10 @@ if uploaded_file:
     heat_blend = blend_heatmap_with_image(image, heatmap, alpha=alpha)
 
     # Tabs
-    tab1, tab2, tab3, tab4 = st.tabs(
-        ["🎭 Mask", "🌈 Overlay", "🔥 Heatmap", "🔥+📷 Heatmap Blend"]
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(
+    ["Mask", " Overlay", "Heatmap", "Heatmap Blend", "🌍 Map Viewer"]
     )
+
 
     # Mask Tab
     with tab1:
@@ -114,7 +118,17 @@ if uploaded_file:
         heatblend_bytes = io.BytesIO()
         Image.fromarray(heat_blend).save(heatblend_bytes, format="PNG")
         st.download_button("Download Blended Heatmap", heatblend_bytes.getvalue(), "heatmap_blend.png")
+    with tab5:
+        st.subheader("Geospatial Map Viewer (Basic Version)")
+
+        # Save uploaded file temporarily
+        temp_file = Path("temp_uploaded.png")
+        image.save(temp_file)
+
+        m = display_geospatial_image(temp_file)
+        st_folium(m, width=900, height=600)
+
 
 else:
-    st.info("⬅️ Upload an RGB image to begin.")
+    st.info("Upload an RGB image to begin.")
 

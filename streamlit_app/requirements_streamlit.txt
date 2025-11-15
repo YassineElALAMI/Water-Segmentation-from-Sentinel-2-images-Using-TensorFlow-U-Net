@@ -3,3 +3,5 @@ pillow
 numpy
 matplotlib
 tensorflow
+folium
+streamlit-folium
